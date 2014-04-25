@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<ivy-module version="2.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:noNamespaceSchemaLocation="http://ant.apache.org/ivy/schemas/ivy.xsd"
+	   xmlns:m="http://ant.apache.org/ivy/maven">
+       
+	<info organisation="com.github.mrstampy" module="esp-nia" status="integration" revision="1.3-SNAPSHOT" />
+	    
+    <publications>
+        <artifact name="esp-nia"/>
+        <artifact name="esp-nia" type="pom" ext="pom" />
+        <artifact name="esp-nia" type="javadoc" m:classifier="javadoc" ext="jar" />
+        <artifact name="esp-nia" type="sources" m:classifier="sources" ext="jar" />
+    </publications>
+	
+	<dependencies>
+		<dependency org="com.github.mrstampy" name="esp" rev="1.3-SNAPSHOT"/>
+		<dependency org="org.usb4java" name="usb4java" rev="1.2.0" />
+		<dependency org="org.usb4java" name="usb4java-javax" rev="1.2.0" />
+	</dependencies>
+	
+</ivy-module>
