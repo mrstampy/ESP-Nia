@@ -2,6 +2,15 @@ package com.github.mrstampy.esp.nia;
 
 import java.util.concurrent.ArrayBlockingQueue;
 
+/**
+ * Buffer for raw Nia data with a capacity of 3910 data points. While the specs
+ * for the device state that the sample rate is 4kHz during testing it was
+ * found that buffering at that size took 1.05 seconds. 3910 data points brought
+ * the time to unity.
+ * 
+ * @author burton
+ * 
+ */
 public class SampleBuffer implements NiaConstants {
 
 	private ArrayBlockingQueue<Double> queue = new ArrayBlockingQueue<Double>(BUFFER_SIZE);

@@ -7,26 +7,32 @@ import java.util.List;
 import com.github.mrstampy.esp.mutliconnectionsocket.AbstractSocketConnector;
 import com.github.mrstampy.esp.mutliconnectionsocket.event.AbstractMultiConnectionEvent;
 
+/**
+ * {@link AbstractSocketConnector} implementation for the OCZ Nia.
+ * 
+ * @author burton
+ * 
+ */
 public class NiaSocketConnector extends AbstractSocketConnector<NiaEventType> {
-	
+
 	private List<NiaEventListener> listeners = Collections.synchronizedList(new ArrayList<NiaEventListener>());
 
 	public NiaSocketConnector(String socketBroadcasterHost) {
 		super(socketBroadcasterHost);
 	}
-	
+
 	public void addListener(NiaEventListener l) {
-		if(l != null && !listeners.contains(l)) listeners.add(l);
+		if (l != null && !listeners.contains(l)) listeners.add(l);
 	}
-	
+
 	public void removeListener(NiaEventListener l) {
-		if(l != null) listeners.remove(l);
+		if (l != null) listeners.remove(l);
 	}
-	
+
 	public void clearListeners() {
 		listeners.clear();
 	}
-	
+
 	public boolean subscribe() {
 		return subscribe(new NiaSubscriptionRequest());
 	}
@@ -38,9 +44,9 @@ public class NiaSocketConnector extends AbstractSocketConnector<NiaEventType> {
 
 	@Override
 	protected void processEvent(AbstractMultiConnectionEvent<NiaEventType> message) {
-		NiaEvent event = (NiaEvent)message;
+		NiaEvent event = (NiaEvent) message;
 
-		for(NiaEventListener l : listeners) {
+		for (NiaEventListener l : listeners) {
 			l.niaEventPerformed(event);
 		}
 	}

@@ -33,6 +33,12 @@ import com.github.mrstampy.esp.mutliconnectionsocket.MultiConnectionSocketExcept
 import com.github.mrstampy.esp.nia.subscription.NiaEvent;
 import com.github.mrstampy.esp.nia.subscription.NiaEventListener;
 
+/**
+ * OCZ Nia implementation of the {@link AbstractMultiConnectionSocket}.
+ * 
+ * @author burton
+ * 
+ */
 public class MultiConnectNiaSocket extends AbstractMultiConnectionSocket<byte[]> implements NiaConstants {
 	private static final Logger log = LoggerFactory.getLogger(MultiConnectNiaSocket.class);
 
