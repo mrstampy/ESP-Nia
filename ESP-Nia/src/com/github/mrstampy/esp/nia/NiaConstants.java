@@ -29,7 +29,7 @@ public interface NiaConstants {
 	 * During testing the device consistently returned 3910 samples / second
 	 * to 4 ten thousandths of a second.
 	 */
-	public static final int BUFFER_SIZE = 3910;
+	public static final int BUFFER_SIZE = 3906;
 	public static final int FFT_SIZE = 512;
 	public static final double SAMPLE_RATE = 100;
 	public static final double SAMPLE_SLEEP = 1000 / SAMPLE_RATE;
