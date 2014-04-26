@@ -18,13 +18,7 @@
  */
 package com.github.mrstampy.esp.nia;
 
-import java.math.BigDecimal;
-import java.math.RoundingMode;
-import java.util.concurrent.ArrayBlockingQueue;
-import java.util.concurrent.atomic.AtomicInteger;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import com.github.mrstampy.esp.multiconnectionsocket.RawDataSampleBuffer;
 
 /**
  * Buffer for raw Nia data with a capacity of 3906 data points. While the specs
@@ -35,88 +29,21 @@ import org.slf4j.LoggerFactory;
  * @author burton
  * 
  */
-public class SampleBuffer implements NiaConstants {
-	private static final Logger log = LoggerFactory.getLogger(SampleBuffer.class);
-
-	private int bufferSize = BUFFER_SIZE;
-	private ArrayBlockingQueue<Double> queue = new ArrayBlockingQueue<Double>(bufferSize);
-
-	private AtomicInteger totalForTuning = new AtomicInteger();
-
-	private long startTimeTuning;
-
-	private volatile boolean tuning;
+public class SampleBuffer extends RawDataSampleBuffer<byte[]> implements NiaConstants {
+	
+	public SampleBuffer() {
+		super(BUFFER_SIZE, FFT_SIZE);
+	}
 
 	public void addSample(byte[] buffer) {
 		int numSamples = getNumberOfSamples(buffer);
-
-		if (tuning) totalForTuning.addAndGet(numSamples);
 
 		double[] samples = new double[numSamples];
 		for (int b = 0; b < numSamples; b++) {
 			samples[b] = getSample(buffer, b);
 		}
 
-		addSample(samples);
-	}
-
-	public double[] getSnapshot() {
-		Double[] snap = queue.toArray(new Double[] {});
-
-		double[] shot = new double[FFT_SIZE];
-
-		double factor = ((double) getBufferSize()) / FFT_SIZE;
-
-		int j = 0;
-		for (double i = 0; i < snap.length; i += factor) {
-			shot[j] = snap[(int) i];
-			j++;
-		}
-
-		return shot;
-	}
-
-	public void clear() {
-		queue.clear();
-	}
-
-	/**
-	 * When invoked the number of samples will be counted. When
-	 * {@link #stopTuning()} is invoked the time taken to process the total number
-	 * of samples taken during that time will be used to resize the sample buffer.
-	 */
-	public void tune() {
-		if (tuning) return;
-
-		totalForTuning.set(0);
-		tuning = true;
-		startTimeTuning = System.nanoTime();
-	}
-
-	/**
-	 * Invoked after a period of time after invoking tune(). Will resize the queue
-	 * to represent ~ 1 second's worth of data based upon the total number of
-	 * samples received during tuning.
-	 */
-	public void stopTuning() {
-		if (!tuning) return;
-
-		tuning = false;
-
-		long diff = System.nanoTime() - startTimeTuning;
-		int total = totalForTuning.get();
-
-		BigDecimal seconds = new BigDecimal(diff).divide(new BigDecimal(1000000000), 10, RoundingMode.HALF_UP);
-
-		int newBufSize = new BigDecimal(total).divide(seconds, 3, RoundingMode.HALF_UP).intValue();
-
-		log.info("Resizing buffer to {}", newBufSize);
-
-		setBufferSize(newBufSize);
-
-		synchronized (queue) {
-			queue = new ArrayBlockingQueue<Double>(newBufSize);
-		}
+		addSampleImpl(samples);
 	}
 
 	private double getSample(byte[] buffer, int i) {
@@ -135,21 +62,5 @@ public class SampleBuffer implements NiaConstants {
 
 	private int getNumberOfSamples(byte[] data) {
 		return data[54];
-	}
-
-	private void addSample(double[] sample) {
-		for (int i = 0; i < sample.length; i++) {
-			if (queue.remainingCapacity() == 0) queue.remove();
-
-			queue.add(sample[i]);
-		}
-	}
-
-	public int getBufferSize() {
-		return bufferSize;
-	}
-
-	public void setBufferSize(int bufferSize) {
-		this.bufferSize = bufferSize;
 	}
 }
