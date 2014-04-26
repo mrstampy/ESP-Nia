@@ -1,5 +1,10 @@
 # ESP-Nia - EEG Signal Processing for the OCZ Nia
 
+## Release 1.4, April 27 2014
+
+* Bugfix on socket close
+* Added ability to tune buffer size to more closely represent 1 seconds' worth of data
+
 This library provides the OCZ Nia implementation of the [ESP](http://mrstampy.github.io/ESP/) library classes. It is designed to be fast and efficient, using high performance Java libraries:
 
 * [Disruptor](https://github.com/LMAX-Exchange/disruptor)
@@ -10,7 +15,7 @@ This library provides the OCZ Nia implementation of the [ESP](http://mrstampy.gi
        <dependency>
            <groupId>com.github.mrstampy</groupId>
            <artifactId>esp-nia</artifactId>
-           <version>1.3</version>
+           <version>1.4</version>
        </dependency>
 
 Usage of the library is straight-forward. One only needs to instantiate the MultiConnectNiaSocket, add a listener, start the socket and deal with the events as they occur.
