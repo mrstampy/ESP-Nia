@@ -22,7 +22,7 @@ import org.apache.mina.core.session.IoSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.github.mrstampy.esp.mutliconnectionsocket.AbstractSubscriptionHandlerAdapter;
+import com.github.mrstampy.esp.multiconnectionsocket.AbstractSubscriptionHandlerAdapter;
 import com.github.mrstampy.esp.nia.subscription.NiaEventType;
 import com.github.mrstampy.esp.nia.subscription.NiaSubscriptionRequest;
 

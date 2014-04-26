@@ -18,7 +18,7 @@
  */
 package com.github.mrstampy.esp.nia.subscription;
 
-import com.github.mrstampy.esp.mutliconnectionsocket.event.AbstractMultiConnectionEvent;
+import com.github.mrstampy.esp.multiconnectionsocket.event.AbstractMultiConnectionEvent;
 
 /**
  * Represents the current second's worth of samples, 512 data points sampled at

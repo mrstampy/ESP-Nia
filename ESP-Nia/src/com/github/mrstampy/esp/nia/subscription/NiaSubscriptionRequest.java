@@ -18,7 +18,7 @@
  */
 package com.github.mrstampy.esp.nia.subscription;
 
-import com.github.mrstampy.esp.mutliconnectionsocket.subscription.MultiConnectionSubscriptionRequest;
+import com.github.mrstampy.esp.multiconnectionsocket.subscription.MultiConnectionSubscriptionRequest;
 
 public class NiaSubscriptionRequest implements MultiConnectionSubscriptionRequest<NiaEventType> {
 

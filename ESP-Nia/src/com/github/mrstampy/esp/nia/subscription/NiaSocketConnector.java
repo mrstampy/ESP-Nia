@@ -22,8 +22,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import com.github.mrstampy.esp.mutliconnectionsocket.AbstractSocketConnector;
-import com.github.mrstampy.esp.mutliconnectionsocket.event.AbstractMultiConnectionEvent;
+import com.github.mrstampy.esp.multiconnectionsocket.AbstractSocketConnector;
+import com.github.mrstampy.esp.multiconnectionsocket.event.AbstractMultiConnectionEvent;
 
 /**
  * {@link AbstractSocketConnector} implementation for the OCZ Nia.

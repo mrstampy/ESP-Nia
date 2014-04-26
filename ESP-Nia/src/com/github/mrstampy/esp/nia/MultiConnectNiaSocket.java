@@ -46,8 +46,8 @@ import org.apache.mina.core.service.IoHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.github.mrstampy.esp.mutliconnectionsocket.AbstractMultiConnectionSocket;
-import com.github.mrstampy.esp.mutliconnectionsocket.MultiConnectionSocketException;
+import com.github.mrstampy.esp.multiconnectionsocket.AbstractMultiConnectionSocket;
+import com.github.mrstampy.esp.multiconnectionsocket.MultiConnectionSocketException;
 import com.github.mrstampy.esp.nia.subscription.NiaEvent;
 import com.github.mrstampy.esp.nia.subscription.NiaEventListener;
 

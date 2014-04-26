@@ -18,7 +18,7 @@
  */
 package com.github.mrstampy.esp.nia;
 
-import com.github.mrstampy.esp.mutliconnectionsocket.AbstractSocketConnector;
+import com.github.mrstampy.esp.multiconnectionsocket.AbstractSocketConnector;
 import com.github.mrstampy.esp.nia.dsp.NiaSignalAggregator;
 import com.github.mrstampy.esp.nia.subscription.NiaSocketConnector;
 
