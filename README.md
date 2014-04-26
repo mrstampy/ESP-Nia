@@ -27,6 +27,6 @@ Additional classes have been added to assist with raw signal processing. The exa
 
 Additional functionality is described in the JavaDocs. This work is released under the GPL 3.0 license. No warranty of any kind is offered.
 
-[ESP](http://mrstampy.github.io/ESP-Nia/) Copyright (C) 2014 Burton Alexander. 
+[ESP-Nia](http://mrstampy.github.io/ESP-Nia/) Copyright (C) 2014 Burton Alexander. 
 
 OCZ Nia is a trademark of [OCZ](http://www.ocz.com)
