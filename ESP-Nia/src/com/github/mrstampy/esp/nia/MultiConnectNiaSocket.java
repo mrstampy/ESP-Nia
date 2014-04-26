@@ -140,7 +140,10 @@ public class MultiConnectNiaSocket extends AbstractMultiConnectionSocket<byte[]>
 	private void niaStop() throws UsbException, UsbClaimException {
 		connected = false;
 		if (future != null) future.cancel(true);
-		if (niaPipe != null && niaPipe.isOpen()) niaPipe.close();
+		if (niaPipe != null && niaPipe.isOpen()) {
+			niaPipe.abortAllSubmissions();
+			niaPipe.close();
+		}
 		if (usbInterface != null && usbInterface.isClaimed()) usbInterface.release();
 	}
 
