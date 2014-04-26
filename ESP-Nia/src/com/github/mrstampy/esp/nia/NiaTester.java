@@ -45,7 +45,7 @@ public class NiaTester {
 
 		niaSocket.start();
 
-		printSampleLengths(aggregator);
+		printSampleLengths(aggregator, niaSocket);
 	}
 
 	/**
@@ -68,12 +68,19 @@ public class NiaTester {
 
 		niaSocket.start();
 
-		printSampleLengths(aggregator);
+		printSampleLengths(aggregator, niaSocket);
 	}
 
-	private static void printSampleLengths(NiaSignalAggregator aggregator) throws InterruptedException {
+	private static void printSampleLengths(NiaSignalAggregator aggregator, MultiConnectNiaSocket socket) throws InterruptedException {
+		boolean tuning = false;
+		int cntr = 0;
 		while (true) {
 			Thread.sleep(1000);
+			cntr++;
+			if(!tuning && cntr > 4) {
+				tuning = true;
+				socket.tune();
+			}
 			double[][] sampled = aggregator.getCurrentSecondOfSampledData();
 
 			int length = sampled.length;
