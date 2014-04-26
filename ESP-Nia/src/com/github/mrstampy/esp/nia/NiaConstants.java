@@ -26,7 +26,7 @@ public interface NiaConstants {
 	public static final int NIA_ENDPOINT_2 = 0x1;
 
 	/**
-	 * During testing the device consistently returned 3910 samples / second
+	 * During testing the device consistently returned 3906 samples / second
 	 * to 4 ten thousandths of a second.
 	 */
 	public static final int BUFFER_SIZE = 3906;
