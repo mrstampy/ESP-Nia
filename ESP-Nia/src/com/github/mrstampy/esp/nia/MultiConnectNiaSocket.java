@@ -104,27 +104,22 @@ public class MultiConnectNiaSocket extends AbstractMultiConnectionSocket<byte[]>
 	 * represent 1 seconds' worth of data.
 	 */
 	public void tune() {
-		if(!isConnected()) {
+		if (!isConnected()) {
 			log.warn("Must be connected to the Nia to tune");
 			return;
 		}
-		
+
 		log.info("Tuning sample buffer");
 
 		sampleBuffer.tune();
 
-		Thread thread = new Thread() {
-			public void run() {
-				try {
-					Thread.sleep(10000);
-				} catch (InterruptedException e) {
+		scheduledExecutorService.schedule(new Runnable() {
 
-				}
+			@Override
+			public void run() {
 				sampleBuffer.stopTuning();
 			}
-		};
-
-		thread.start();
+		}, 10, TimeUnit.SECONDS);
 	}
 
 	@Override
