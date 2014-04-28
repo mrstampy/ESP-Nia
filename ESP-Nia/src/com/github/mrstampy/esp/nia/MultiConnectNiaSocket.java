@@ -21,8 +21,6 @@ package com.github.mrstampy.esp.nia;
 import java.io.IOException;
 import java.util.List;
 import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -46,6 +44,14 @@ import org.apache.mina.core.service.IoHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import rx.Observable;
+import rx.Scheduler;
+import rx.Scheduler.Inner;
+import rx.Scheduler.Recurse;
+import rx.Subscription;
+import rx.functions.Action1;
+import rx.schedulers.Schedulers;
+
 import com.github.mrstampy.esp.multiconnectionsocket.AbstractMultiConnectionSocket;
 import com.github.mrstampy.esp.multiconnectionsocket.MultiConnectionSocketException;
 import com.github.mrstampy.esp.nia.subscription.NiaEvent;
@@ -59,15 +65,15 @@ import com.github.mrstampy.esp.nia.subscription.NiaEventListener;
  */
 public class MultiConnectNiaSocket extends AbstractMultiConnectionSocket<byte[]> implements NiaConstants {
 	private static final Logger log = LoggerFactory.getLogger(MultiConnectNiaSocket.class);
+	private static final int MAX_NUM_OUTSTANDING = 10;
 
 	private UsbInterface usbInterface;
 	private UsbPipe niaPipe;
-	private NiaReader reader;
 
 	private SampleBuffer sampleBuffer = new SampleBuffer();
 
-	private ScheduledExecutorService scheduledExecutorService = Executors.newScheduledThreadPool(3);
-	private ScheduledFuture<?> future;
+	private Scheduler scheduler = Schedulers.executor(Executors.newScheduledThreadPool(3));
+	private Subscription subscription;
 
 	private volatile boolean connected;
 
@@ -113,10 +119,10 @@ public class MultiConnectNiaSocket extends AbstractMultiConnectionSocket<byte[]>
 
 		sampleBuffer.tune();
 
-		scheduledExecutorService.schedule(new Runnable() {
+		scheduler.schedule(new Action1<Scheduler.Inner>() {
 
 			@Override
-			public void run() {
+			public void call(Inner t1) {
 				sampleBuffer.stopTuning();
 			}
 		}, 10, TimeUnit.SECONDS);
@@ -144,10 +150,10 @@ public class MultiConnectNiaSocket extends AbstractMultiConnectionSocket<byte[]>
 		niaPipe.open();
 		connected = true;
 		startReadThread();
-		future = scheduledExecutorService.scheduleAtFixedRate(new Runnable() {
+		subscription = scheduler.schedulePeriodically(new Action1<Scheduler.Inner>() {
 
 			@Override
-			public void run() {
+			public void call(Inner t1) {
 				processSnapshot(sampleBuffer.getSnapshot());
 			}
 		}, (long) SAMPLE_RATE * 2, (long) SAMPLE_SLEEP, TimeUnit.MILLISECONDS);
@@ -164,7 +170,7 @@ public class MultiConnectNiaSocket extends AbstractMultiConnectionSocket<byte[]>
 
 	private void niaStop() throws UsbException, UsbClaimException {
 		connected = false;
-		if (future != null) future.cancel(true);
+		if (subscription != null) subscription.unsubscribe();
 		if (niaPipe != null && niaPipe.isOpen()) {
 			niaPipe.abortAllSubmissions();
 			niaPipe.close();
@@ -180,12 +186,24 @@ public class MultiConnectNiaSocket extends AbstractMultiConnectionSocket<byte[]>
 
 	@Override
 	protected void parseMessage(byte[] message) {
-		sampleBuffer.addSample(message);
+		Observable.from(message).subscribe(new Action1<byte[]>() {
+
+			@Override
+			public void call(byte[] msg) {
+				sampleBuffer.addSample(msg);
+			}
+		});
 	}
 
 	private void processSnapshot(double[] snapshot) {
-		notifyListeners(snapshot);
-		if (canBroadcast()) subscriptionHandlerAdapter.sendMultiConnectionEvent(new NiaEvent(snapshot));
+		Observable.from(snapshot).subscribe(new Action1<double[]>() {
+
+			@Override
+			public void call(double[] snap) {
+				notifyListeners(snap);
+				if (canBroadcast()) subscriptionHandlerAdapter.sendMultiConnectionEvent(new NiaEvent(snap));
+			}
+		});
 	}
 
 	private void notifyListeners(double[] snapshot) {
@@ -198,8 +216,32 @@ public class MultiConnectNiaSocket extends AbstractMultiConnectionSocket<byte[]>
 	}
 
 	private void startReadThread() {
-		reader = new NiaReader();
-		reader.start();
+		scheduler.scheduleRecursive(new Action1<Scheduler.Recurse>() {
+			
+			@Override
+			public void call(Recurse t1) {
+				if(!isConnected()) return;
+				
+				addBytesToPipe();
+				
+				t1.schedule();
+			}
+		});
+	}
+	
+	private void addBytesToPipe() {		
+		try {
+			byte[] b = new byte[55];
+			niaPipe.asyncSubmit(b);
+			
+			int num = numOutstanding.incrementAndGet();
+			while (isConnected() && num > MAX_NUM_OUTSTANDING) {
+				Thread.sleep(1);
+				num = numOutstanding.get();
+			}
+		}	catch (Exception e) {
+			log.error("Problem reading from the Nia", e);
+		}
 	}
 
 	private void initDevice() throws SecurityException, UsbException {
@@ -246,33 +288,6 @@ public class MultiConnectNiaSocket extends AbstractMultiConnectionSocket<byte[]>
 		}
 
 		return null;
-	}
-
-	private class NiaReader extends Thread {
-
-		private static final int MAX_NUM_OUTSTANDING = 10;
-
-		public void run() {
-			byte[] buf;
-			while (isConnected()) {
-				try {
-					buf = new byte[55];
-					niaPipe.asyncSubmit(buf);
-					checkOutstanding();
-				} catch (Exception e) {
-					log.error("Problem reading Nia data", e);
-					break;
-				}
-			}
-		}
-
-		private void checkOutstanding() throws InterruptedException {
-			int num = numOutstanding.incrementAndGet();
-			while (isConnected() && num > MAX_NUM_OUTSTANDING) {
-				Thread.sleep(2);
-				num = numOutstanding.get();
-			}
-		}
 	}
 
 }
