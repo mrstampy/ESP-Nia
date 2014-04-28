@@ -186,13 +186,7 @@ public class MultiConnectNiaSocket extends AbstractMultiConnectionSocket<byte[]>
 
 	@Override
 	protected void parseMessage(byte[] message) {
-		Observable.from(message).subscribe(new Action1<byte[]>() {
-
-			@Override
-			public void call(byte[] msg) {
-				sampleBuffer.addSample(msg);
-			}
-		});
+		sampleBuffer.addSample(message);
 	}
 
 	private void processSnapshot(double[] snapshot) {
