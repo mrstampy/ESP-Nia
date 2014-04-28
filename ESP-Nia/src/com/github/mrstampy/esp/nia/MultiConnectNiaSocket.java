@@ -72,7 +72,7 @@ public class MultiConnectNiaSocket extends AbstractMultiConnectionSocket<byte[]>
 
 	private SampleBuffer sampleBuffer = new SampleBuffer();
 
-	private Scheduler scheduler = Schedulers.executor(Executors.newScheduledThreadPool(3));
+	private Scheduler scheduler = Schedulers.executor(Executors.newScheduledThreadPool(5));
 	private Subscription subscription;
 
 	private volatile boolean connected;
