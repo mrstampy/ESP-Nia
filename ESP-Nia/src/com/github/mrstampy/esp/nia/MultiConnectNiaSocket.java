@@ -198,7 +198,7 @@ public class MultiConnectNiaSocket extends AbstractMultiConnectionSocket<byte[]>
 	}
 
 	private void processSnapshot(double[] snapshot) {
-		Observable.from(snapshot).subscribe(new Action1<double[]>() {
+		Observable.just(snapshot).subscribe(new Action1<double[]>() {
 
 			@Override
 			public void call(double[] snap) {
