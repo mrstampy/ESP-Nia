@@ -89,6 +89,8 @@ public class MultiConnectNiaSocket extends AbstractMultiConnectionSocket<byte[]>
 
 	public MultiConnectNiaSocket(boolean broadcasting) throws IOException {
 		super(broadcasting);
+		
+		addConnectionEventListener(sampleBuffer);
 	}
 
 	public void addListener(NiaEventListener l) {
@@ -268,16 +270,10 @@ public class MultiConnectNiaSocket extends AbstractMultiConnectionSocket<byte[]>
 
 			@Override
 			public void dataEventOccurred(UsbPipeDataEvent event) {
-				Observable.from(event).subscribe(new Action1<UsbPipeDataEvent>() {
-
-					@Override
-					public void call(UsbPipeDataEvent t1) {
-						if (isConnected()) {
-							numOutstanding.decrementAndGet();
-							publishMessage(t1.getData());
-						}
-					}
-				});
+				if (isConnected()) {
+					numOutstanding.decrementAndGet();
+					publishMessage(event.getData());
+				}
 			}
 		});
 	}
