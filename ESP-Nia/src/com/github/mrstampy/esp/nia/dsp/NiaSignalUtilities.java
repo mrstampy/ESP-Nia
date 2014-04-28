@@ -22,6 +22,7 @@ import java.math.BigDecimal;
 
 import com.github.mrstampy.esp.dsp.EspSignalUtilities;
 import com.github.mrstampy.esp.nia.NiaConstants;
+import com.github.mrstampy.esp.nia.NiaDSPValues;
 
 import ddf.minim.analysis.HammingWindow;
 
@@ -35,12 +36,12 @@ public class NiaSignalUtilities extends EspSignalUtilities implements NiaConstan
 
 	@Override
 	protected int getFFTSize() {
-		return FFT_SIZE;
+		return NiaDSPValues.getInstance().getSampleSize();
 	}
 
 	@Override
 	protected double getSampleRate() {
-		return SAMPLE_RATE;
+		return NiaDSPValues.getInstance().getSampleRate();
 	}
 
 	@Override

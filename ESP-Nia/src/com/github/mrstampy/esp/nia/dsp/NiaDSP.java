@@ -27,6 +27,7 @@ import com.github.mrstampy.esp.dsp.RawProcessedListener;
 import com.github.mrstampy.esp.dsp.RawSignalAggregator;
 import com.github.mrstampy.esp.nia.MultiConnectNiaSocket;
 import com.github.mrstampy.esp.nia.NiaConstants;
+import com.github.mrstampy.esp.nia.NiaDSPValues;
 
 /**
  * {@link EspDSP} default implementation for the OCZ Nia.
@@ -40,7 +41,7 @@ public class NiaDSP extends EspDSP<MultiConnectNiaSocket> implements NiaConstant
 	private NiaSignalUtilities utilities = new NiaSignalUtilities();
 
 	public NiaDSP(MultiConnectNiaSocket socket, double... frequencies) {
-		super(socket, (int) SAMPLE_RATE, frequencies);
+		super(socket, NiaDSPValues.getInstance().getSampleRate(), frequencies);
 
 		socket.addListener(aggregator);
 	}

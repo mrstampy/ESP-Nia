@@ -32,7 +32,7 @@ import com.github.mrstampy.esp.multiconnectionsocket.RawDataSampleBuffer;
 public class SampleBuffer extends RawDataSampleBuffer<byte[]> implements NiaConstants {
 	
 	public SampleBuffer() {
-		super(BUFFER_SIZE, FFT_SIZE);
+		super(BUFFER_SIZE, NiaDSPValues.getInstance().getSampleSize());
 	}
 
 	public void addSample(byte[] buffer) {

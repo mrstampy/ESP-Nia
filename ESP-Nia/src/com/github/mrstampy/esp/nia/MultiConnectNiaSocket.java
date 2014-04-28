@@ -150,13 +150,19 @@ public class MultiConnectNiaSocket extends AbstractMultiConnectionSocket<byte[]>
 		niaPipe.open();
 		connected = true;
 		startReadThread();
+		
+		NiaDSPValues values = NiaDSPValues.getInstance();
+		long pause = 500l;
+		long snooze = values.getSampleRateSleepTime();
+		TimeUnit tu = values.getSampleRateUnits();
+
 		subscription = scheduler.schedulePeriodically(new Action1<Scheduler.Inner>() {
 
 			@Override
 			public void call(Inner t1) {
 				processSnapshot(sampleBuffer.getSnapshot());
 			}
-		}, (long) SAMPLE_RATE * 2, (long) SAMPLE_SLEEP, TimeUnit.MILLISECONDS);
+		}, pause, snooze, tu);
 	}
 
 	@Override
@@ -211,29 +217,29 @@ public class MultiConnectNiaSocket extends AbstractMultiConnectionSocket<byte[]>
 
 	private void startReadThread() {
 		scheduler.scheduleRecursive(new Action1<Scheduler.Recurse>() {
-			
+
 			@Override
 			public void call(Recurse t1) {
-				if(!isConnected()) return;
-				
+				if (!isConnected()) return;
+
 				addBytesToPipe();
-				
+
 				t1.schedule();
 			}
 		});
 	}
-	
-	private void addBytesToPipe() {		
+
+	private void addBytesToPipe() {
 		try {
 			byte[] b = new byte[55];
 			niaPipe.asyncSubmit(b);
-			
+
 			int num = numOutstanding.incrementAndGet();
 			while (isConnected() && num > MAX_NUM_OUTSTANDING) {
 				Thread.sleep(1);
 				num = numOutstanding.get();
 			}
-		}	catch (Exception e) {
+		} catch (Exception e) {
 			log.error("Problem reading from the Nia", e);
 		}
 	}

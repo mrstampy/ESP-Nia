@@ -31,8 +31,7 @@ public interface NiaConstants {
 	 */
 	public static final int BUFFER_SIZE = 3906;
 	public static final int FFT_SIZE = 2048;
-	public static final double SAMPLE_RATE = 100;
-	public static final double SAMPLE_SLEEP = 1000 / SAMPLE_RATE;
+	public static final int SAMPLE_RATE = 200;
 	
 	public static final double LOWEST_SIGNAL_VAL = -8388608;
 	public static final double HIGHEST_SIGNAL_VAL = 8388607;
