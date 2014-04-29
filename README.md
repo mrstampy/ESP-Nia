@@ -1,10 +1,5 @@
 # ESP-Nia - EEG Signal Processing for the OCZ Nia
 
-## Release 1.4, April 27 2014
-
-* Bugfix on socket close
-* Added ability to tune buffer size to more closely represent 1 seconds' worth of data
-
 This library provides the OCZ Nia implementation of the [ESP](http://mrstampy.github.io/ESP/) library classes. It is designed to be fast and efficient, using high performance Java libraries:
 
 * [Disruptor](https://github.com/LMAX-Exchange/disruptor)
@@ -21,6 +16,11 @@ This library provides the OCZ Nia implementation of the [ESP](http://mrstampy.gi
 * Sample rates above 1kHz allowed
 * Reasonable results sampling into the 50kHz range
 * Default sample rate increased to 200 Hz, default sample size to 2048
+
+## Release 1.4, April 27 2014
+
+* Bugfix on socket close
+* Added ability to tune buffer size to more closely represent 1 seconds' worth of data
 
 ## Maven Dependency
        <dependency>
