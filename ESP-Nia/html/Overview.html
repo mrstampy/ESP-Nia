@@ -3,6 +3,18 @@
 
 <body>
 	<h1>ESP-Nia - EEG Signal Processing for the OCZ Nia</h1>
+	
+	<h2>Release 2.0, 29-04-14</h2>
+	<ul>
+		<li>Added <a href="https://github.com/Netflix/RxJava/">RxJava</a> to the project</li>
+		<li>Added ability to tune sample buffer size to more closely represent 1 second's worth of data</li>
+		<li>Utilizing Disruptor in raw sample buffer</li>
+		<li>Sample rate and sample size now mutable</li>
+		<li>Sample rates above 1kHz allowed</li>
+		<li>Reasonable results sampling into the 50kHz range (*well* above what is required for EEG Signal Processing)</li>
+		<li>Default sample rate increased to 200 Hz, default sample size to 2048</li>
+	</ul>
+	
 	<h2>Release 1.4, 27-04-14</h2>
 	<p>
 		<ul>
@@ -12,13 +24,14 @@
 	</p>
 	<p>
 		This Java library provides the implementation of <a href="http://mrstampy.github.io/ESP/">ESP</a> library classes to acquire the
-		raw EEG signal from the OCZ Nia. 
-		ESP-Nia was compiled for Java version 1.6 compatibility. The core classes have been designed with speed and concurrency
+		raw EEG signal from the OCZ Nia. ESP-Nia was compiled for Java version 1.6 compatibility.  
+		The core classes have been designed with speed and concurrency
 		in mind using high performance Java libraries:
 	<ul>
 		<li><a href="https://github.com/LMAX-Exchange/disruptor">Disruptor</a></li>
 		<li><a href="http://javolution.org/">Javolution</a></li>
 		<li><a href="http://mina.apache.org/">Apache MINA</a></li>
+		<li><a href="https://github.com/Netflix/RxJava/">RxJava</a></li>
 	</ul>
 	</p>
 	
@@ -63,12 +76,11 @@
 		In the development of the <a href="http://mrstampy.github.io/ESP-Nia/">ESP-Nia</a> implementation the base classes
 		for raw signal processing were developed.  Multi connection socket implementations contain a raw data buffer which contains
 		the current second's worth of data (for the OCZ Nia this translates to 3906 data points, for the ThinkGear devices this translates
-		to 512 data points).  A sampler snapshots the buffer at a rate of 100Hz and raw data events are generated from the snapshots
-		(for both the Nia and ThinkGear implementations each snapshot consists of 512 evenly spaced data points).
+		to 512 data points).
 	</p>
 	<p>
 		Raw data event listeners can make use of <a href="com/github/mrstampy/esp/nia/dsp/NiaSignalAggregator.html">NiaSignalAggregator</a> 
-		which keeps the current second's worth of snapshots in memory (100).  The 
+		which keeps the current second's worth of snapshots in memory (number of snapshots = sample rate).  The 
 		<a href="com/github/mrstampy/esp/nia/dsp/NiaDSP.html">NiaDSP</a> class
 		provides the ability to apply signal processing algorithms to the current group of snapshots and notifies any 
 		RawProcessedListeners upon completion of each cycle. 
