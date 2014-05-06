@@ -20,6 +20,7 @@ package com.github.mrstampy.esp.nia.dsp;
 
 import java.math.BigDecimal;
 
+import com.github.mrstampy.esp.dsp.AbstractDSPValues;
 import com.github.mrstampy.esp.dsp.EspSignalUtilities;
 import com.github.mrstampy.esp.nia.NiaConstants;
 import com.github.mrstampy.esp.nia.NiaDSPValues;
@@ -47,5 +48,10 @@ public class NiaSignalUtilities extends EspSignalUtilities implements NiaConstan
 	@Override
 	protected BigDecimal getRawSignalBreadth() {
 		return SIGNAL_BREADTH;
+	}
+
+	@Override
+	public AbstractDSPValues getDSPValues() {
+		return NiaDSPValues.getInstance();
 	}
 }
