@@ -54,6 +54,7 @@ import rx.schedulers.Schedulers;
 
 import com.github.mrstampy.esp.multiconnectionsocket.AbstractMultiConnectionSocket;
 import com.github.mrstampy.esp.multiconnectionsocket.MultiConnectionSocketException;
+import com.github.mrstampy.esp.multiconnectionsocket.ConnectionEvent.State;
 import com.github.mrstampy.esp.nia.subscription.NiaEvent;
 import com.github.mrstampy.esp.nia.subscription.NiaEventListener;
 
@@ -266,6 +267,7 @@ public class MultiConnectNiaSocket extends AbstractMultiConnectionSocket<byte[]>
 			@Override
 			public void errorEventOccurred(UsbPipeErrorEvent event) {
 				log.error("Unexpected exception reading NIA", event.getUsbException());
+				notifyConnectionEventListeners(State.ERROR_STOPPED);
 			}
 
 			@Override
