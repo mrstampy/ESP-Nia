@@ -94,4 +94,14 @@ public class NiaConnection extends AbstractRawEspConnection<MultiConnectNiaSocke
 		return "ESP Nia";
 	}
 
+	@Override
+	public double[][] getCurrentFor(int channelNumber) {
+		return getCurrent();
+	}
+
+	@Override
+	public double[][] getCurrentFor(int numSamples, int channelNumber) {
+		return getCurrent(numSamples);
+	}
+
 }
