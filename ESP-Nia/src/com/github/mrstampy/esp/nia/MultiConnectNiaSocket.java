@@ -19,6 +19,7 @@
 package com.github.mrstampy.esp.nia;
 
 import java.io.IOException;
+import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
@@ -53,8 +54,9 @@ import rx.functions.Action1;
 import rx.schedulers.Schedulers;
 
 import com.github.mrstampy.esp.multiconnectionsocket.AbstractMultiConnectionSocket;
-import com.github.mrstampy.esp.multiconnectionsocket.MultiConnectionSocketException;
 import com.github.mrstampy.esp.multiconnectionsocket.ConnectionEvent.State;
+import com.github.mrstampy.esp.multiconnectionsocket.EspChannel;
+import com.github.mrstampy.esp.multiconnectionsocket.MultiConnectionSocketException;
 import com.github.mrstampy.esp.nia.subscription.NiaEvent;
 import com.github.mrstampy.esp.nia.subscription.NiaEventListener;
 
@@ -84,13 +86,15 @@ public class MultiConnectNiaSocket extends AbstractMultiConnectionSocket<byte[]>
 
 	private AtomicInteger numOutstanding = new AtomicInteger();
 
+	private EspChannel niaChannel = new EspChannel(1, "OCZ NIA Signal");
+
 	public MultiConnectNiaSocket() throws IOException {
 		this(false);
 	}
 
 	public MultiConnectNiaSocket(boolean broadcasting) throws IOException {
 		super(broadcasting);
-		
+
 		addConnectionEventListener(sampleBuffer);
 	}
 
@@ -137,6 +141,21 @@ public class MultiConnectNiaSocket extends AbstractMultiConnectionSocket<byte[]>
 	}
 
 	@Override
+	public int getNumChannels() {
+		return 1;
+	}
+
+	@Override
+	public List<EspChannel> getChannels() {
+		return Collections.nCopies(1, niaChannel);
+	}
+
+	@Override
+	public EspChannel getChannel(int channelNumber) {
+		return niaChannel;
+	}
+
+	@Override
 	protected void startImpl() throws MultiConnectionSocketException {
 		try {
 			niaStart();
@@ -153,7 +172,7 @@ public class MultiConnectNiaSocket extends AbstractMultiConnectionSocket<byte[]>
 		niaPipe.open();
 		connected = true;
 		startReadThread();
-		
+
 		NiaDSPValues values = NiaDSPValues.getInstance();
 		long pause = 500l;
 		long snooze = values.getSampleRateSleepTime();
