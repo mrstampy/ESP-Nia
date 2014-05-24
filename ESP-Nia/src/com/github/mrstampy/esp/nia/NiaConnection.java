@@ -65,7 +65,7 @@ public class NiaConnection extends AbstractRawEspConnection<MultiConnectNiaSocke
 	}
 
 	@Override
-	protected MultiConnectNiaSocket getSocket() {
+	public MultiConnectNiaSocket getSocket() {
 		return nia;
 	}
 
